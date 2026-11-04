@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Projects Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+      color: #f3f4f6;
+    }
+    
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5), 0 0 25px rgba(59, 130, 246, 0.15);
+    }
+
+    .glow-effect {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      filter: blur(90px);
+      z-index: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+  <!-- Background Ambient Glows -->
+  <div class="glow-effect bg-blue-500 top-0 left-1/4"></div>
+  <div class="glow-effect bg-emerald-500 bottom-1/3 right-1/4"></div>
+
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-gray-950/80 border-b border-gray-800/80">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-white leading-none">My Projects Portfolio</h1>
+          <p class="text-xs text-gray-400 font-medium mt-1 uppercase tracking-wider">Personal Showcase</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active Portfolio
+        </span>
+        <a href="#contact" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all">
+          Contact Me
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Content Container -->
+  <main class="max-w-7xl mx-auto px-6 py-12 flex-grow relative z-10">
+
+    <!-- Hero Title Section -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-4">
+        <i class="fa-solid fa-layer-group mr-1.5"></i> My Web & Data Projects Showcase
+      </span>
+      <h2 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        Selangor Tourism & <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">Malaysia Population Data</span>
+      </h2>
+      <p class="text-gray-400 mt-4 text-base md:text-lg">
+        Explore interactive web applications featuring tourism spot mapping and national demographic analytics.
+      </p>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+
+      <!-- Project 1 Card -->
+      <a href="https://kanesh0506.github.io/Lab%201/index.html.html" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-semibold border border-blue-500/20">
+              Project 01 • Web & Tourism
+            </span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-gray-500 group-hover:text-blue-400 transition-colors"></i>
+          </div>
+
+          <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+            Selangor Tourism Spot Explorer
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-6">
+            An interactive showcase highlighting popular attractions across Selangor, including Batu Caves, Sunway Lagoon, Sky Mirror, and Sekinchan.
+          </p>
+
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 text-xs font-medium">Interactive Map</span>
+            <span class="px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 text-xs font-medium">UX Showcase</span>
+            <span class="px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 text-xs font-medium">Selangor Travel</span>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-gray-800 flex items-center justify-between">
+          <span class="text-xs text-gray-500 font-mono">LAB 1</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 group-hover:translate-x-1 transition-transform">
+            Launch Interactive App <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </div>
+      </a>
+
+      <!-- Project 2 Card -->
+      <a href="https://kanesh0506.github.io/LAB_2/index.html" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20">
+              Project 02 • Data Analytics
+            </span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-gray-500 group-hover:text-emerald-400 transition-colors"></i>
+          </div>
+
+          <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+            Malaysia Population Data Dashboard
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-6">
+            Data visualization dashboard analyzing national demographic trends, state distribution, ethnicity breakdowns, and census insights across Malaysia.
+          </p>
+
+          <div class="flex flex-wrap gap-2 mb-6">
+            <span class="px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 text-xs font-medium">Demographics</span>
+            <span class="px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 text-xs font-medium">DOSM Census</span>
+            <span class="px-2.5 py-1 rounded-md bg-gray-800 text-gray-300 text-xs font-medium">Data Dashboard</span>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-gray-800 flex items-center justify-between">
+          <span class="text-xs text-gray-500 font-mono">LAB 2</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 group-hover:translate-x-1 transition-transform">
+            Launch Interactive App <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="max-w-2xl mx-auto glass-card rounded-2xl p-8 border border-gray-800">
+      <div class="text-center mb-6">
+        <h3 class="text-2xl font-bold text-white">Send a Message</h3>
+        <p class="text-xs text-gray-400 mt-1">For more information or project inquiries, feel free to drop a message below.</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); alert('Message sent successfully!');" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Your Name</label>
+          <input type="text" placeholder="John Doe" required class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Email Address</label>
+          <input type="email" placeholder="john@example.com" required class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Message</label>
+          <textarea rows="4" placeholder="Type your message or inquiry here..." required class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 hover:from-blue-500 hover:to-emerald-400 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-500/20">
+          Send Message
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800/80 bg-gray-950 py-6 text-center text-xs text-gray-500">
+    <p>© 2026 My Projects Portfolio. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
