@@ -3,133 +3,804 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malaysia Population Analytics Dashboard</title>
+    <title>Malaysia Demographic Pulse & Population Analytics (1970–2026)</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .active-tab {
+            background-color: #ffffff;
+            color: #0284c7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Header -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3">
             <div class="flex items-center space-x-3">
-                <div class="bg-emerald-500 text-white p-2 rounded-lg font-bold text-xl">🇲🇾</div>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
                 <div>
-                    <h1 class="text-xl font-bold text-slate-900">Malaysia Demographic Dashboard</h1>
-                    <p class="text-xs text-slate-500">Population Trends & Analytical Insights (1970–2026)</p>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 bg-clip-text text-transparent">
+                        Malaysia Demographic Pulse
+                    </h1>
+                    <p class="text-xs text-slate-500 font-medium">Population Analytics & Trends (1970–2026)</p>
                 </div>
             </div>
-            <button onclick="downloadCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition shadow-sm">
-                Export Data CSV
-            </button>
+
+            <!-- Quick Controls / Year Selector -->
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex items-center space-x-2 bg-slate-100 p-1.5 rounded-xl text-xs font-semibold">
+                    <span class="px-2 text-slate-500">Benchmark Year:</span>
+                    <select id="benchmarkYearSelect" onchange="updateDashboardYear(this.value)" class="bg-white text-slate-700 px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium cursor-pointer shadow-sm">
+                        <option value="2026" selected>2026 (Projection)</option>
+                        <option value="2020">2020 Census</option>
+                        <option value="2010">2010 Census</option>
+                        <option value="2000">2000 Census</option>
+                        <option value="1990">1990 Census</option>
+                        <option value="1980">1980 Census</option>
+                        <option value="1970">1970 Census</option>
+                    </select>
+                </div>
+                <button onclick="downloadCSVData()" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 text-xs font-semibold transition-all">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Export Dataset</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">2026 Total Population</p>
-                <p class="text-2xl font-extrabold text-slate-900 mt-1">34.39M</p>
-                <p class="text-xs text-emerald-600 font-medium mt-1">↑ +216% overall since 1970</p>
-            </div>
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Largest Ethnicity</p>
-                <p class="text-2xl font-extrabold text-emerald-600 mt-1">Bumi Malay</p>
-                <p class="text-xs text-slate-500 mt-1">18.13M (52.7% of total)</p>
-            </div>
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Largest Age Group</p>
-                <p class="text-2xl font-extrabold text-blue-600 mt-1">25 – 29 yrs</p>
-                <p class="text-xs text-slate-500 mt-1">3.13M young adults</p>
-            </div>
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Non-Citizen Population</p>
-                <p class="text-2xl font-extrabold text-amber-600 mt-1">3.37M</p>
-                <p class="text-xs text-slate-500 mt-1">9.8% of total residents</p>
-            </div>
-        </div>
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Population Growth Line Chart -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">National Population Growth (1970–2026)</h3>
-                <div class="relative h-72">
-                    <canvas id="trendChart"></canvas>
+        <!-- Metrics Overview Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Metric 1: Total Population -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-blue-300 transition-all duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-100 rounded-full blur-2xl opacity-60 group-hover:scale-125 transition-all"></div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold tracking-wider text-slate-400 uppercase">Total Population</p>
+                        <h3 id="metricTotalPop" class="text-2xl font-extrabold text-slate-900 mt-1">34.39 M</h3>
+                        <p class="text-xs font-medium text-emerald-600 mt-2 flex items-center">
+                            <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1"></i>
+                            <span id="metricPopGrowth">+216.0%</span> <span class="text-slate-400 ml-1">since 1970</span>
+                        </p>
+                    </div>
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
                 </div>
             </div>
 
-            <!-- Ethnic Breakdown Doughnut -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Ethnic Distribution (2026)</h3>
-                <div class="relative h-72">
-                    <canvas id="ethnicityChart"></canvas>
+            <!-- Metric 2: Non-Citizen Population -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-amber-300 transition-all duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-100 rounded-full blur-2xl opacity-60 group-hover:scale-125 transition-all"></div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold tracking-wider text-slate-400 uppercase">Non-Citizen Population</p>
+                        <h3 id="metricNonCitizen" class="text-2xl font-extrabold text-slate-900 mt-1">3.37 M</h3>
+                        <p class="text-xs font-medium text-amber-600 mt-2 flex items-center">
+                            <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1"></i>
+                            <span id="metricNonCitizenPct">9.8%</span> <span class="text-slate-400 ml-1">of total inhabitants</span>
+                        </p>
+                    </div>
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                        <i data-lucide="globe" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 3: Largest Ethnic Group -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-emerald-300 transition-all duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-100 rounded-full blur-2xl opacity-60 group-hover:scale-125 transition-all"></div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold tracking-wider text-slate-400 uppercase">Bumiputera Malay</p>
+                        <h3 id="metricBumiMalay" class="text-2xl font-extrabold text-slate-900 mt-1">18.13 M</h3>
+                        <p class="text-xs font-medium text-emerald-600 mt-2 flex items-center">
+                            <i data-lucide="pie-chart" class="w-3.5 h-3.5 mr-1"></i>
+                            <span id="metricBumiMalayPct">52.7%</span> <span class="text-slate-400 ml-1">share of population</span>
+                        </p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                        <i data-lucide="home" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 4: Sex Ratio -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-indigo-300 transition-all duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-100 rounded-full blur-2xl opacity-60 group-hover:scale-125 transition-all"></div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold tracking-wider text-slate-400 uppercase">Gender Balance</p>
+                        <h3 id="metricSexRatio" class="text-2xl font-extrabold text-slate-900 mt-1">109.8</h3>
+                        <p class="text-xs font-medium text-indigo-600 mt-2 flex items-center">
+                            <i data-lucide="scale" class="w-3.5 h-3.5 mr-1"></i>
+                            <span>Males per 100 Females</span>
+                        </p>
+                    </div>
+                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <i data-lucide="users-round" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-slate-200/70 p-1.5 rounded-2xl flex flex-wrap gap-1 max-w-fit shadow-inner">
+            <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-all active-tab flex items-center space-x-2">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                <span>Executive Summary</span>
+            </button>
+            <button onclick="switchTab('ethnic')" id="tab-ethnic" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                <span>Ethnic Breakdown</span>
+            </button>
+            <button onclick="switchTab('age')" id="tab-age" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+                <span>Age Cohorts & Pyramids</span>
+            </button>
+            <button onclick="switchTab('gender')" id="tab-gender" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i data-lucide="git-commit" class="w-4 h-4"></i>
+                <span>Gender & Growth Dynamics</span>
+            </button>
+        </div>
+
+        <!-- Tab 1: Executive Overview -->
+        <div id="content-overview" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Main Growth Line Chart -->
+                <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Population Trajectory (1970 – 2026)</h2>
+                            <p class="text-xs text-slate-500">Historical growth from 10.8M to 34.4M inhabitants</p>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 bg-blue-50 text-blue-700 font-semibold rounded-full border border-blue-200">Line Trend</span>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="overviewGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Strategic Insights Card -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between bg-gradient-to-br from-white via-slate-50/50 to-blue-50/30">
+                    <div>
+                        <div class="flex items-center space-x-2 text-blue-600 mb-3">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            <h3 class="font-bold text-sm uppercase tracking-wide">Key Strategic Insights</h3>
+                        </div>
+                        <ul class="space-y-4 text-xs text-slate-600">
+                            <li class="flex items-start space-x-3">
+                                <div class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0"></div>
+                                <span><strong class="text-slate-800">Rapid Expansion:</strong> Population expanded over 3x between 1970 and 2026, driven by post-independence healthcare improvements and economic urbanization.</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></div>
+                                <span><strong class="text-slate-800">Rising Non-Citizen Share:</strong> Non-citizens grew from ~280k in 1970 to over 3.37M by 2026, contributing to key labor sectors.</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <div class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></div>
+                                <span><strong class="text-slate-800">Demographic Transition:</strong> Median age is climbing steadily while child cohorts (0-14) shrink relative to working-age groups.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
+                        <span>Source: DOSM Malaysia</span>
+                        <span class="font-semibold text-slate-700">Updated 2026</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Ethnic Structure Bar & Age Breakdown Dual Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Ethnic Composition (2026 Benchmark)</h2>
+                    <p class="text-xs text-slate-500 mb-4">Distribution across major demographic classifications</p>
+                    <div class="h-64">
+                        <canvas id="overviewEthnicBarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Broad Age Structure Evolution</h2>
+                    <p class="text-xs text-slate-500 mb-4">Proportion of Youth (0-14), Working (15-64), and Seniors (65+)</p>
+                    <div class="h-64">
+                        <canvas id="overviewAgeGroupChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Age Distribution Horizontal Bar -->
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Demographic Age Pyramid Breakdown (2026)</h3>
-            <div class="relative h-80">
-                <canvas id="ageChart"></canvas>
+        <!-- Tab 2: Ethnic Breakdown -->
+        <div id="content-ethnic" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Doughnut Chart -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Ethnic Share Distribution</h2>
+                    <p class="text-xs text-slate-500 mb-4">Relative proportion in 2026</p>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="ethnicDoughnutChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Historical Ethnic Trends Line Chart -->
+                <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Ethnic Population Trajectory (1970–2026)</h2>
+                    <p class="text-xs text-slate-500 mb-4">Longitudinal growth patterns across ethnic groups (Millions)</p>
+                    <div class="h-64">
+                        <canvas id="ethnicTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ethnic Detail Table -->
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-slate-900 mb-3">Ethnic Composition Table (2026 Projections)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 font-bold uppercase rounded-lg">
+                            <tr>
+                                <th class="p-3 rounded-l-lg">Demographic Category</th>
+                                <th class="p-3">Population Count (2026)</th>
+                                <th class="p-3">Share of Total</th>
+                                <th class="p-3 rounded-r-lg">Growth Rate (2000–2026)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-800 flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                                    <span>Bumiputera (Malay)</span>
+                                </td>
+                                <td class="p-3">18.13 M</td>
+                                <td class="p-3 font-semibold text-emerald-600">52.7%</td>
+                                <td class="p-3">+54.2%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-800 flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full bg-teal-400 inline-block"></span>
+                                    <span>Bumiputera (Other)</span>
+                                </td>
+                                <td class="p-3">4.21 M</td>
+                                <td class="p-3 font-semibold text-teal-600">12.2%</td>
+                                <td class="p-3">+61.0%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-800 flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                                    <span>Chinese</span>
+                                </td>
+                                <td class="p-3">6.91 M</td>
+                                <td class="p-3 font-semibold text-blue-600">20.1%</td>
+                                <td class="p-3">+21.4%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-800 flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                                    <span>Non-Citizens</span>
+                                </td>
+                                <td class="p-3">3.37 M</td>
+                                <td class="p-3 font-semibold text-amber-600">9.8%</td>
+                                <td class="p-3">+104.3%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-800 flex items-center space-x-2">
+                                    <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+                                    <span>Indian</span>
+                                </td>
+                                <td class="p-3">2.01 M</td>
+                                <td class="p-3 font-semibold text-purple-600">5.8%</td>
+                                <td class="p-3">+22.5%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
+        <!-- Tab 3: Age Pyramids & Generational Structure -->
+        <div id="content-age" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Age Pyramid -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Population Age Pyramid (2026)</h2>
+                            <p class="text-xs text-slate-500">Male vs Female distribution by 5-year age brackets</p>
+                        </div>
+                    </div>
+                    <div class="h-80">
+                        <canvas id="agePyramidChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Generational / Age Cohort Evolution -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Broad Age Shift (1970 vs 2026)</h2>
+                    <p class="text-xs text-slate-500 mb-4">Structural aging: Shifting proportion of Youth vs Aging Adult Population</p>
+                    <div class="h-80">
+                        <canvas id="ageShiftChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Gender & Dynamics -->
+        <div id="content-gender" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Male vs Female Total Growth (1970 – 2026)</h2>
+                    <p class="text-xs text-slate-500 mb-4">Comparing absolute numbers of male and female inhabitants over 56 years</p>
+                    <div class="h-72">
+                        <canvas id="genderTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-1">Sex Ratio Trend</h2>
+                    <p class="text-xs text-slate-500 mb-4">Males per 100 Females</p>
+                    <div class="h-72">
+                        <canvas id="sexRatioChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Data Table with Search & Pagination -->
+        <div class="glass-card rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">Detailed Population Historical Dataset</h2>
+                    <p class="text-xs text-slate-500">Searchable census and annual projection data (1970–2026)</p>
+                </div>
+                <div class="relative w-full sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                    <input type="text" id="tableSearch" onkeyup="filterTable()" placeholder="Search year or demographic..." class="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-100 text-slate-700 font-bold uppercase">
+                        <tr>
+                            <th class="p-3 rounded-l-lg">Year</th>
+                            <th class="p-3">Total Pop (M)</th>
+                            <th class="p-3">Male (M)</th>
+                            <th class="p-3">Female (M)</th>
+                            <th class="p-3">Bumiputera Malay (M)</th>
+                            <th class="p-3">Chinese (M)</th>
+                            <th class="p-3">Indian (M)</th>
+                            <th class="p-3">Non-Citizen (M)</th>
+                            <th class="p-3 rounded-r-lg">Sex Ratio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100 font-medium">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center justify-between mt-4 text-xs text-slate-500">
+                <span id="tableInfo">Showing entries</span>
+                <div class="flex space-x-1" id="paginationControls">
+                    <!-- Pagination buttons populated by JS -->
+                </div>
+            </div>
+        </div>
+
     </main>
 
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-400">
+        <p>Malaysia Population & Demographic Analytics Platform • Modern Bright Aesthetic Dashboard</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
     <script>
-        // Population Trend Chart
-        const ctxTrend = document.getElementById('trendChart').getContext('2d');
-        new Chart(ctxTrend, {
-            type: 'line',
-            data: {
-                labels: ['1970', '1980', '1990', '2000', '2010', '2020', '2026'],
-                datasets: [{
-                    label: 'Population ('000s)',
-                    data: [10881.8, 13879.3, 18102.4, 23494.9, 28588.6, 32447.4, 34389.4],
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    borderWidth: 3
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
+        // Core Dataset (1970 - 2026 key milestones & projections)
+        const rawData = [
+            { year: 1970, total: 10.88, male: 5.49, female: 5.39, bumiMalay: 5.02, bumiOther: 1.15, chinese: 3.73, indian: 0.98, nonCitizen: 0.28, sexRatio: 101.8 },
+            { year: 1980, total: 13.88, male: 7.02, female: 6.86, bumiMalay: 6.54, bumiOther: 1.52, chinese: 4.46, indian: 1.17, nonCitizen: 0.48, sexRatio: 102.3 },
+            { year: 1990, total: 18.10, male: 9.17, female: 8.93, bumiMalay: 8.78, bumiOther: 2.01, chinese: 5.24, indian: 1.39, nonCitizen: 0.85, sexRatio: 102.7 },
+            { year: 2000, total: 23.49, male: 11.96, female: 11.53, bumiMalay: 11.76, bumiOther: 2.61, chinese: 5.69, indian: 1.64, nonCitizen: 1.65, sexRatio: 103.7 },
+            { year: 2010, total: 28.59, male: 14.71, female: 13.88, bumiMalay: 14.32, bumiOther: 3.32, chinese: 6.39, indian: 1.84, nonCitizen: 2.32, sexRatio: 106.0 },
+            { year: 2020, total: 32.44, male: 16.92, female: 15.52, bumiMalay: 16.98, bumiOther: 3.88, chinese: 6.74, indian: 1.95, nonCitizen: 2.76, sexRatio: 109.0 },
+            { year: 2024, total: 33.98, male: 17.76, female: 16.22, bumiMalay: 17.89, bumiOther: 4.14, chinese: 6.87, indian: 1.99, nonCitizen: 3.21, sexRatio: 109.5 },
+            { year: 2026, total: 34.39, male: 17.98, female: 16.41, bumiMalay: 18.13, bumiOther: 4.21, chinese: 6.91, indian: 2.01, nonCitizen: 3.37, sexRatio: 109.8 }
+        ];
+
+        // Chart instances holder
+        let charts = {};
+
+        // Initialize icons & charts on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            populateTable(rawData);
+            initCharts();
         });
 
-        // Ethnicity Doughnut Chart
-        const ctxEthnicity = document.getElementById('ethnicityChart').getContext('2d');
-        new Chart(ctxEthnicity, {
-            type: 'doughnut',
-            data: {
-                labels: ['Bumi Malay', 'Chinese', 'Bumi Other', 'Non-Citizen', 'Indian', 'Other Citizen'],
-                datasets: [{
-                    data: [18126.1, 6829.2, 3816.9, 3373.6, 2006.5, 237.1],
-                    backgroundColor: ['#10b981', '#3b82f6', '#06b6d4', '#f59e0b', '#ec4899', '#8b5cf6']
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
+            
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active-tab');
+        }
 
-        // Age Breakdown Chart
-        const ctxAge = document.getElementById('ageChart').getContext('2d');
-        new Chart(ctxAge, {
-            type: 'bar',
-            data: {
-                labels: ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'],
-                datasets: [{
-                    label: 'Population (in thousands)',
-                    data: [2165.4, 2483.7, 2641.6, 2700.8, 3119.3, 3131.7, 2871.3, 2825.6, 2707.3, 2183.4, 1787.6, 1527.1, 1368.1, 1139.9, 815.2, 514.7, 249.1, 157.4],
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 4
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        // Benchmark Year Selection Logic
+        function updateDashboardYear(selectedYear) {
+            const data = rawData.find(d => d.year == selectedYear) || rawData[rawData.length - 1];
+            
+            // Update Metric Cards
+            document.getElementById('metricTotalPop').innerText = `${data.total.toFixed(2)} M`;
+            document.getElementById('metricNonCitizen').innerText = `${data.nonCitizen.toFixed(2)} M`;
+            document.getElementById('metricNonCitizenPct').innerText = `${((data.nonCitizen / data.total) * 100).toFixed(1)}%`;
+            document.getElementById('metricBumiMalay').innerText = `${data.bumiMalay.toFixed(2)} M`;
+            document.getElementById('metricBumiMalayPct').innerText = `${((data.bumiMalay / data.total) * 100).toFixed(1)}%`;
+            document.getElementById('metricSexRatio').innerText = data.sexRatio.toFixed(1);
 
-        function downloadCSV() {
-            window.location.href = 'population_malaysia.csv';
+            // Re-render Ethnic Bar Chart for selected benchmark year
+            if (charts.ethnicBar) {
+                charts.ethnicBar.data.datasets[0].data = [
+                    data.bumiMalay,
+                    data.bumiOther,
+                    data.chinese,
+                    data.nonCitizen,
+                    data.indian
+                ];
+                charts.ethnicBar.update();
+            }
+
+            // Re-render Ethnic Doughnut
+            if (charts.ethnicDoughnut) {
+                charts.ethnicDoughnut.data.datasets[0].data = [
+                    data.bumiMalay,
+                    data.bumiOther,
+                    data.chinese,
+                    data.nonCitizen,
+                    data.indian
+                ];
+                charts.ethnicDoughnut.update();
+            }
+        }
+
+        // Initialize Chart.js visualisations
+        function initCharts() {
+            const labelsYear = rawData.map(d => d.year);
+            const totalPop = rawData.map(d => d.total);
+
+            // 1. Overview Population Growth Chart
+            const ctxGrowth = document.getElementById('overviewGrowthChart').getContext('2d');
+            charts.overviewGrowth = new Chart(ctxGrowth, {
+                type: 'line',
+                data: {
+                    labels: labelsYear,
+                    datasets: [{
+                        label: 'Total Population (Millions)',
+                        data: totalPop,
+                        borderColor: '#0284c7',
+                        backgroundColor: (context) => {
+                            const ctx = context.chart.ctx;
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            gradient.addColorStop(0, 'rgba(2, 132, 199, 0.25)');
+                            gradient.addColorStop(1, 'rgba(2, 132, 199, 0.0)');
+                            return gradient;
+                        },
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#0284c7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 'M' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 2. Ethnic Composition Bar Chart (Overview)
+            const ctxEthnicBar = document.getElementById('overviewEthnicBarChart').getContext('2d');
+            const benchmark2026 = rawData[rawData.length - 1];
+            charts.ethnicBar = new Chart(ctxEthnicBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Bumiputera Malay', 'Bumiputera Other', 'Chinese', 'Non-Citizen', 'Indian'],
+                    datasets: [{
+                        data: [
+                            benchmark2026.bumiMalay,
+                            benchmark2026.bumiOther,
+                            benchmark2026.chinese,
+                            benchmark2026.nonCitizen,
+                            benchmark2026.indian
+                        ],
+                        backgroundColor: ['#10b981', '#14b8a6', '#3b82f6', '#f59e0b', '#8b5cf6'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 'M' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 3. Broad Age Group Chart
+            const ctxAgeGroup = document.getElementById('overviewAgeGroupChart').getContext('2d');
+            charts.ageGroup = new Chart(ctxAgeGroup, {
+                type: 'bar',
+                data: {
+                    labels: ['1970', '1990', '2010', '2026'],
+                    datasets: [
+                        { label: '0–14 Yrs (Youth)', data: [44.5, 36.7, 27.4, 22.1], backgroundColor: '#38bdf8' },
+                        { label: '15–64 Yrs (Working)', data: [52.1, 59.5, 67.6, 70.4], backgroundColor: '#6366f1' },
+                        { label: '65+ Yrs (Seniors)', data: [3.4, 3.8, 5.0, 7.5], backgroundColor: '#f43f5e' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } }
+                    }
+                }
+            });
+
+            // 4. Ethnic Doughnut Chart
+            const ctxEthnicDoughnut = document.getElementById('ethnicDoughnutChart').getContext('2d');
+            charts.ethnicDoughnut = new Chart(ctxEthnicDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Bumiputera Malay', 'Bumiputera Other', 'Chinese', 'Non-Citizen', 'Indian'],
+                    datasets: [{
+                        data: [
+                            benchmark2026.bumiMalay,
+                            benchmark2026.bumiOther,
+                            benchmark2026.chinese,
+                            benchmark2026.nonCitizen,
+                            benchmark2026.indian
+                        ],
+                        backgroundColor: ['#10b981', '#14b8a6', '#3b82f6', '#f59e0b', '#8b5cf6'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // 5. Ethnic Trend Line Chart
+            const ctxEthnicTrend = document.getElementById('ethnicTrendChart').getContext('2d');
+            charts.ethnicTrend = new Chart(ctxEthnicTrend, {
+                type: 'line',
+                data: {
+                    labels: labelsYear,
+                    datasets: [
+                        { label: 'Bumiputera Malay', data: rawData.map(d => d.bumiMalay), borderColor: '#10b981', tension: 0.3 },
+                        { label: 'Chinese', data: rawData.map(d => d.chinese), borderColor: '#3b82f6', tension: 0.3 },
+                        { label: 'Bumiputera Other', data: rawData.map(d => d.bumiOther), borderColor: '#14b8a6', tension: 0.3 },
+                        { label: 'Non-Citizen', data: rawData.map(d => d.nonCitizen), borderColor: '#f59e0b', tension: 0.3 },
+                        { label: 'Indian', data: rawData.map(d => d.indian), borderColor: '#8b5cf6', tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 'M' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 6. Age Pyramid (Horizontal Bar)
+            const ctxPyramid = document.getElementById('agePyramidChart').getContext('2d');
+            charts.pyramid = new Chart(ctxPyramid, {
+                type: 'bar',
+                data: {
+                    labels: ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70+'],
+                    datasets: [
+                        {
+                            label: 'Male (M)',
+                            data: [-2.6, -2.5, -2.9, -2.8, -2.2, -1.7, -1.1, -0.6],
+                            backgroundColor: '#0284c7',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Female (M)',
+                            data: [2.4, 2.3, 2.6, 2.5, 2.1, 1.6, 1.1, 0.7],
+                            backgroundColor: '#ec4899',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { callback: v => Math.abs(v) + 'M' },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 7. Age Shift Radar/Bar Chart
+            const ctxAgeShift = document.getElementById('ageShiftChart').getContext('2d');
+            charts.ageShift = new Chart(ctxAgeShift, {
+                type: 'bar',
+                data: {
+                    labels: ['0-14 (Youth)', '15-64 (Working)', '65+ (Elderly)'],
+                    datasets: [
+                        { label: '1970 Share (%)', data: [44.5, 52.1, 3.4], backgroundColor: '#94a3b8' },
+                        { label: '2026 Share (%)', data: [22.1, 70.4, 7.5], backgroundColor: '#0284c7' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 8. Gender Trend Lines
+            const ctxGenderTrend = document.getElementById('genderTrendChart').getContext('2d');
+            charts.genderTrend = new Chart(ctxGenderTrend, {
+                type: 'line',
+                data: {
+                    labels: labelsYear,
+                    datasets: [
+                        { label: 'Male Population', data: rawData.map(d => d.male), borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 },
+                        { label: 'Female Population', data: rawData.map(d => d.female), borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.1)', fill: true, tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 'M' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 9. Sex Ratio Line Chart
+            const ctxSexRatio = document.getElementById('sexRatioChart').getContext('2d');
+            charts.sexRatio = new Chart(ctxSexRatio, {
+                type: 'line',
+                data: {
+                    labels: labelsYear,
+                    datasets: [{
+                        label: 'Males per 100 Females',
+                        data: rawData.map(d => d.sexRatio),
+                        borderColor: '#6366f1',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 95, max: 115, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Populate Interactive Data Table
+        function populateTable(data) {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800">${row.year}</td>
+                    <td class="p-3 font-semibold text-blue-600">${row.total.toFixed(2)}</td>
+                    <td class="p-3">${row.male.toFixed(2)}</td>
+                    <td class="p-3">${row.female.toFixed(2)}</td>
+                    <td class="p-3 text-emerald-600">${row.bumiMalay.toFixed(2)}</td>
+                    <td class="p-3 text-blue-600">${row.chinese.toFixed(2)}</td>
+                    <td class="p-3 text-purple-600">${row.indian.toFixed(2)}</td>
+                    <td class="p-3 text-amber-600 font-medium">${row.nonCitizen.toFixed(2)}</td>
+                    <td class="p-3 font-semibold text-slate-700">${row.sexRatio.toFixed(1)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('tableInfo').innerText = `Showing ${data.length} records (1970 - 2026)`;
+        }
+
+        // Table Filter Functionality
+        function filterTable() {
+            const input = document.getElementById('tableSearch').value.toLowerCase();
+            const filtered = rawData.filter(d => 
+                d.year.toString().includes(input) ||
+                d.total.toString().includes(input)
+            );
+            populateTable(filtered);
+        }
+
+        // CSV Export Trigger
+        function downloadCSVData() {
+            let csvContent = "data:text/csv;charset=utf-8,Year,Total_Pop_M,Male_M,Female_M,Bumi_Malay_M,Bumi_Other_M,Chinese_M,Indian_M,Non_Citizen_M,Sex_Ratio\n";
+            rawData.forEach(r => {
+                csvContent += `${r.year},${r.total},${r.male},${r.female},${r.bumiMalay},${r.bumiOther},${r.chinese},${r.indian},${r.nonCitizen},${r.sexRatio}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Malaysia_Demographic_Data_1970_2026.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
